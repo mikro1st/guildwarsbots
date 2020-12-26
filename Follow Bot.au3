@@ -1,0 +1,188 @@
+#include <ButtonConstants.au3>
+#include <EditConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <StaticConstants.au3>
+#include <WindowsConstants.au3>
+#include "GWA2.au3"
+#include "GWA2_Headers.au3"
+
+
+#Region ### START Koda GUI section ### Form=c:\users\mikro\downloads\koda_1.7.3.0\forms\followbot.kxf
+$FollowBot = GUICreate("Follow Bot", 259, 273, 352, 130)
+$edt_charname = GUICtrlCreateInput("", 96, 8, 153, 21)
+$Label1 = GUICtrlCreateLabel("Character Name", 8, 8, 81, 17)
+$Group1 = GUICtrlCreateGroup("Use this Skills", 8, 144, 241, 89)
+$cb_skill5 = GUICtrlCreateCheckbox("Skill 5", 112, 160, 81, 17)
+$cb_skill6 = GUICtrlCreateCheckbox("Skill 6", 112, 176, 81, 17)
+$cb_skill7 = GUICtrlCreateCheckbox("Skill 7", 112, 192, 81, 17)
+$cb_skill8 = GUICtrlCreateCheckbox("Skill 8", 112, 208, 81, 17)
+$cb_skill4 = GUICtrlCreateCheckbox("Skill 4", 24, 208, 81, 17)
+$cb_skill2 = GUICtrlCreateCheckbox("Skill 2", 24, 176, 81, 17)
+$cb_skill3 = GUICtrlCreateCheckbox("Skill 3", 24, 192, 81, 17)
+$cb_skill1 = GUICtrlCreateCheckbox("Skill 1", 24, 160, 81, 17)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$btn_follow = GUICtrlCreateButton("Follow", 8, 240, 75, 25)
+$btn_loot = GUICtrlCreateButton("Pickup Loot", 88, 240, 75, 25)
+GUICtrlSetState(-1, $GUI_DISABLE)
+$btn_stop = GUICtrlCreateButton("Stop", 176, 240, 75, 25)
+GUICtrlSetState(-1, $GUI_DISABLE)
+$Group2 = GUICtrlCreateGroup("Follow Player", 8, 40, 241, 97)
+$rb_player1 = GUICtrlCreateRadio("Player 1", 24, 64, 57, 17)
+GUICtrlSetState(-1, $GUI_CHECKED)
+$rb_player2 = GUICtrlCreateRadio("Player 2", 24, 80, 57, 17)
+$rb_player3 = GUICtrlCreateRadio("Player 3", 24, 96, 57, 17)
+$rb_player4 = GUICtrlCreateRadio("Player 4", 24, 112, 57, 17)
+$rb_player6 = GUICtrlCreateRadio("Player 6", 128, 80, 57, 17)
+$rb_player5 = GUICtrlCreateRadio("Player 5", 128, 64, 57, 17)
+$rb_player7 = GUICtrlCreateRadio("Player 7", 128, 96, 57, 17)
+$rb_player8 = GUICtrlCreateRadio("Player 8", 128, 112, 57, 17)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+GUISetState(@SW_SHOW)
+#EndRegion ### END Koda GUI section ###
+
+#Region GUI Event Handler
+Opt("GUIOnEventMode", 1)
+
+Func EventHandler()
+	Switch (@GUI_CtrlId)
+		Case $btn_follow
+			$boolRun = True
+			GUICtrlSetState($edt_charname, $GUI_DISABLE)
+			GUICtrlSetState($btn_follow, $GUI_DISABLE)
+			GUICtrlSetState($btn_stop, $GUI_ENABLE)
+			GUICtrlSetState($btn_loot, $GUI_ENABLE)
+			If GUICtrlRead($edt_charname) = "" Then
+				If Initialize(ProcessExists("gw.exe")) = False Then
+					MsgBox(0, "Error", "Guild Wars it not running.")
+					$boolRun = false
+					GUICtrlSetState($btn_follow, $GUI_ENABLE)
+					GUICtrlSetState($btn_stop, $GUI_DISABLE)
+					GUICtrlSetState($btn_loot, $GUI_DISABLE)
+					Exit
+				EndIf
+			Else
+				If Initialize(GUICtrlRead($edt_charname), True, True) = False Then
+					MsgBox(0, "Error", "Can't find a Guild Wars client with that character name.")
+					$boolRun = false
+					GUICtrlSetState($btn_follow, $GUI_ENABLE)
+					GUICtrlSetState($btn_stop, $GUI_DISABLE)
+					GUICtrlSetState($btn_loot, $GUI_DISABLE)
+					Exit
+				EndIf
+			EndIf
+		Case $btn_stop
+			$boolRun = false
+			GUICtrlSetState($btn_follow, $GUI_ENABLE)
+			GUICtrlSetState($btn_stop, $GUI_DISABLE)
+			GUICtrlSetState($btn_loot, $GUI_DISABLE)
+		Case $btn_loot
+			$boolRun = false
+			PickUpLoot()
+			Main()
+			$boolRun = true
+		Case $GUI_EVENT_CLOSE
+			Exit
+	EndSwitch
+ EndFunc
+
+GUICtrlSetOnEvent($btn_follow, "EventHandler")
+GUICtrlSetOnEvent($btn_stop, "EventHandler")
+GUICtrlSetOnEvent($btn_loot, "EventHandler")
+GUISetOnEvent($GUI_EVENT_CLOSE, "EventHandler")
+#EndRegion GUI Event Handler
+
+#Region Loot
+Global Const $RARITY_Gold = 2624
+
+Global Const $ID_Goldcoins = 2511
+Global Const $ID_Lockpicks = 22751
+
+Global Const $ID_Dyes = 146
+
+;~ Special Drops (Event Items)
+Global $Special_Drops[] = [ _
+21492, 21812, 22269, 22644, 22752, 28436, 36681, 35124, 36682, _
+910, 6375, 22190, 28435, 30855, 556, 5656, 18345, 21491, 37765, _
+21833, 28434, 6370, 21488, 21489, 22191, 26784, 28433, 15837, _
+21490, 30648, 31020, 6376, 21809, 21810, 21813, 36683, 2513, _
+5585, 6049, 6366, 6367, 15477, 19171, 24593, 31145, 31146, _
+15528, 15479, 19170, 31150, 35125, 28431, 28432, 6368, 6369]
+
+Global $Elite_Tomes[] = [21790, 21792, 21793, 21786, 21788, 21795, 21787, 21791, 21789, 21794]
+
+Func CanPickUp($aitem)
+	Local $iModelID = DllStructGetData($aitem, 'ModelID')
+	Local $iType = DllStructGetData($aitem, 'Type')
+	Local $iExtraID = DllStructGetData($aItem, 'ExtraID')
+	Local $iRarity = GetRarity($aitem)
+	Local $Ecto = 930
+	;TODO
+
+	If $iModelID = $ID_Goldcoins Then Return True
+	If $iRarity = $RARITY_Gold Then Return True
+	If $iModelID = $ID_Lockpicks Then Return True
+	If $iModelID = $ID_Dyes and $iExtraID>9 Then Return True
+	
+	For $index = 0 To UBound($Special_Drops)-1 
+		If $iModelID = $Special_Drops[$index] Then Return True
+	Next
+
+	For $index = 0 To UBound($Elite_Tomes)-1 
+		If $iModelID = $Elite_Tomes[$index] Then Return True
+	Next
+	If $iModelID = $Ecto then return true
+	Return False
+EndFunc
+#EndRegion Loot
+
+Global $boolRun = false
+Initialize(WinGetProcess("Guild Wars"))
+
+While 1
+	While 1
+		If Not $boolRun Then
+			While Not $boolRun
+				Sleep(500)
+			WEnd
+		EndIf
+		Main()
+	WEnd
+WEnd
+
+#Region Main
+Func Main()
+	Local $leader = GetLeader()
+	If $leader<=0 Then Return
+	$leaderAgent = GetAgentByPlayerNumber($leader)
+	if GetCurrentTarget() <> $leaderAgent Then ChangeTarget($leaderAgent)
+	Sleep(100)
+	If GetIsMoving($leaderAgent) then ActionFollow()
+	While GetIsMoving(-2)
+		sleep(100)
+	WEnd
+	If Not GetIsMoving($leaderAgent) Then Cast()
+EndFunc	;=>Main
+
+Func Cast()
+	If GUICtrlRead($cb_skill1) = $GUI_CHECKED and IsRecharged(1) Then UseSkillEx(1)
+	If GUICtrlRead($cb_skill2) = $GUI_CHECKED and IsRecharged(2) Then UseSkillEx(2)
+	If GUICtrlRead($cb_skill3) = $GUI_CHECKED and IsRecharged(3) Then UseSkillEx(3)
+	If GUICtrlRead($cb_skill4) = $GUI_CHECKED and IsRecharged(4) Then UseSkillEx(4)
+	If GUICtrlRead($cb_skill5) = $GUI_CHECKED and IsRecharged(5) Then UseSkillEx(5)
+	If GUICtrlRead($cb_skill6) = $GUI_CHECKED and IsRecharged(6) Then UseSkillEx(6)
+	If GUICtrlRead($cb_skill7) = $GUI_CHECKED and IsRecharged(7) Then UseSkillEx(7)
+	If GUICtrlRead($cb_skill8) = $GUI_CHECKED and IsRecharged(8) Then UseSkillEx(8)
+EndFunc
+
+Func GetLeader()
+	If GUICtrlRead($rb_player1) = $GUI_CHECKED Then Return 1
+	If GUICtrlRead($rb_player2) = $GUI_CHECKED Then Return 2
+	If GUICtrlRead($rb_player3) = $GUI_CHECKED Then Return 3
+	If GUICtrlRead($rb_player4) = $GUI_CHECKED Then Return 4
+	If GUICtrlRead($rb_player5) = $GUI_CHECKED Then Return 5
+	If GUICtrlRead($rb_player6) = $GUI_CHECKED Then Return 6
+	If GUICtrlRead($rb_player7) = $GUI_CHECKED Then Return 7
+	If GUICtrlRead($rb_player8) = $GUI_CHECKED Then Return 8
+	Return 0
+EndFunc
+#endRegion Main

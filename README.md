@@ -10,3 +10,17 @@ With the Follow Bot you are able to define a party member which should be follow
 Further you can define which skills should be used when the bot reaches the "leader"
 The button "Pickup loot" allowes the bot to automatically search for event items, gold and ectos to collect them. After finishing collecting everything the bot will return to its leader.
 Current Bug: The Bot just crashes if you start it in an outpost. Start it right after entering an explorable area and you should be fine. (Then you can even go back into an outpost or travel with the bot account and he should work properly)
+By Mikro1st
+
+Dragon Moss:
+By n0futur3 & やェねちもオ
+
+Celestrial Weapon:
+TODO: Adjust GUI
+By Mikro1st
+
+ReFeathers:
+By Unknown
+
+Vaettir:
+By Niliya

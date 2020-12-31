@@ -3,8 +3,8 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-#include "GWA2.au3"
-#include "GWA2_Headers.au3"
+#include "config/GWA2.au3"
+#include "config/GWA2_Headers.au3"
 
 
 #Region ### START Koda GUI section ### Form=c:\users\mikro\downloads\koda_1.7.3.0\forms\followbot.kxf

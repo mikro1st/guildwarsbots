@@ -1,8 +1,8 @@
 #include <ButtonConstants.au3>
-#include <gwa2.au3>
+#include "config/GWA2.au3"
 #include <ComboConstants.au3>
 #include <GUIConstantsEx.au3>
-#include "GWA2_Headers.au3"
+#include "config/GWA2_Headers.au3"
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
 #Region declarations

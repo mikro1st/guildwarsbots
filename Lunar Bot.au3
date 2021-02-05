@@ -85,9 +85,9 @@ While 1
         Main()
         $boolRun = false
         if(Not InventoryCheck()) Then
-            MsgBox(0,"Done","No Tokens left")
-        elseif(CountItemInBagsByModelID($TokenID)=0) Then
             MsgBox(0,"Ups","Inventory full")
+        elseif(CountItemInBagsByModelID($TokenID)=0) Then
+            MsgBox(0,"Done","No Tokens left")
         Else
             MsgBox(0,"Error","Something strange happened")
         EndIf
@@ -165,7 +165,7 @@ EndFunc
 
 Func InventoryCheck()
     Local $slotsLeft = CountSlots()
-	If $slotsLeft < 0 or ($slotsLeft = 0 and Mod(CountItemInBagsByModelID($FortuneID),250) <> 0) Then
+	If $slotsLeft > 0 or ($slotsLeft = 0 and Mod(CountItemInBagsByModelID($FortuneID),250) <> 0) Then
 		Return True
 	Else
 		Return False

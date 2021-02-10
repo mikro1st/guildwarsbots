@@ -164,10 +164,10 @@ EndFunc   ;==>ToggleRendering
 Func Out($msg)
 	GUICtrlSetData($slabel, "[" & @HOUR & ":" & @MIN & "]" & $msg)
 EndFunc   ;==>Out
-Func UseSkillEx($lSkill, $lTgt = -2, $aTimeout = 3000)
+Func UseSkillExFOW($lSkill, $lTgt = -2, $aTimeout = 3000)
 	$mSkillbar = GetSkillbar()
 	If GetIsDead(-2) Then Return
-	If Not IsRecharged($lSkill) Then Return
+	If Not IsRechargedFOW($lSkill) Then Return
 	If GetEnergy(-2) < $skillCost[$lSkill] Then Return
 	Local $Skill = GetSkillByID(DllStructGetData($mSkillbar, 'Id' & $lSkill))
 	If DllStructGetData($mSkillbar, 'AdrenalineA' & $lSkill) < DllStructGetData($lSkill, 'Adrenaline') Then Return False
@@ -176,20 +176,20 @@ Func UseSkillEx($lSkill, $lTgt = -2, $aTimeout = 3000)
 	Do
 		Sleep(50)
 		If GetIsDead(-2) = 1 Then Return
-	Until (Not IsRecharged($lSkill)) Or (TimerDiff($lDeadlock) > $aTimeout)
+	Until (Not IsRechargedFOW($lSkill)) Or (TimerDiff($lDeadlock) > $aTimeout)
 
 	If $lSkill > 1 Then RndSleep(350)
 EndFunc   ;==>UseSkillEx
 
 Func UseSF()
-	If IsRecharged($sf) Then
-		UseSkillEx($sf)
+	If IsRechargedFOW($sf) Then
+		UseSkillExFOW($sf)
 	EndIf
-	If isrecharged($shroud) and  GetEffectTimeRemaining($skill_id_iau) > 1 Then
-		 useSkillEx($shroud)
+	If isRechargedFOW($shroud) and  GetEffectTimeRemaining($skill_id_iau) > 1 Then
+		 useSkillExFOW($shroud)
 	EndIf
     if GetEffectTimeRemaining($skill_id_shroud) < 10 then
-	   useSkillEx($shroud)
+	   useSkillExFOW($shroud)
     EndIf
 EndFunc   ;==>UseSF
 Func MoveRunning($lDestX, $lDestY)
@@ -217,7 +217,7 @@ Func MoveRunning($lDestX, $lDestY)
 		 EndIf
 		UseSF()
 		If $lBlocked = 5 Then
-			UseSkillEx($hos,-1)
+			UseSkillExFOW($hos,-1)
 			Sleep(100)
 			Move($lDestX, $lDestY)
 			If DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0 Then
@@ -232,10 +232,10 @@ Func MoveRunning($lDestX, $lDestY)
 		EndIf
 
 		If DllStructGetData($lMe, 'hp') < 0.2 Then
-			UseSkillEx($hos)
+			UseSkillExFOW($hos)
 		 EndIf
 	    if gethascondition($lme) and  DllStructGetData($lMe, 'hp') < 0.4 Then
-			UseSkillEx($hos)
+			UseSkillExFOW($hos)
 		 EndIf
 		 If GetDistance() > 1100 Then ;
 			If TimerDiff($ChatStuckTimer) > 3000 Then ;
@@ -259,27 +259,27 @@ Func WaitFor($lMs,$class = 1 ) ;class cause we dont want to hos @ rangers
 	   if GetEffectTimeRemaining($skill_id_wd) < 1 then Return
 		Sleep(100)
 		If GetIsDead(-2) Then Return
-		If IsRecharged($iau)  Then
-			UseSkillEx($iau)
+		If IsRechargedFOW($iau)  Then
+			UseSkillExFOW($iau)
 		 EndIf
 
 		If DllStructGetData($lMe, 'hp') < 0.3 Then
-			UseSkillEx($hos)
+			UseSkillExFOW($hos)
 		 EndIf
 		 if gethascondition($lme) and DllStructGetData($lMe, 'hp') < 0.4 Then
-			UseSkillEx($hos)
+			UseSkillExFOW($hos)
 		 EndIf
 		UseSF()
-		if isrecharged($mb) and geteffecttimeremaining($skill_id_mb) = 0 Then
-		   useskillex($mb)
+		if IsRechargedFOW($mb) and geteffecttimeremaining($skill_id_mb) = 0 Then
+		   UseSkillExFOW($mb)
 		 EndIf
 	 Until TimerDiff($lTimer) > $lMs or GetIsDead(-2)
   Else
 	 Do
 		Sleep(100)
 		If GetIsDead(-2) Then Return
-		If IsRecharged($iau) Then
-			UseSkillEx($iau)
+		If IsRechargedFOW($iau) Then
+			UseSkillExFOW($iau)
 		 EndIf
 		UseSF()
 	 Until TimerDiff($lTimer) > $lMs
@@ -293,31 +293,31 @@ Func loop()
 	If Not $RenderingEnabled Then ClearMemory()
    If getmapid() <> $fow then Return
    	out("moving to first spot")
-	UseSkillEx($sf)
-	UseSkillEx($ds)
-	UseSkillEx($de)
+	UseSkillExFOW($sf)
+	UseSkillExFOW($ds)
+	UseSkillExFOW($de)
 	moveto(-21131, -2390)
 	MoveRunning(-16494, -3113)
 	out("starting to ball abbys")
 	Sleep(1000)
-	UseSkillEx($iau)
-	If IsRecharged($ds) Then
-		UseSkillEx($ds)
+	UseSkillExFOW($iau)
+	If IsRechargedFOW($ds) Then
+		UseSkillExFOW($ds)
 	EndIf
-	If IsRecharged($ds) Then
-		UseSkillEx($ds)
+	If IsRechargedFOW($ds) Then
+		UseSkillExFOW($ds)
 	 EndIf
-    useskillex($mb)
+    UseSkillExFOW($mb)
 	MoveRunning(-14453, -3536)
-   	UseSkillEx($ds)
-	UseSkillEx($wd)
+   	UseSkillExFOW($ds)
+	UseSkillExFOW($wd)
 	$whirletimer = TimerInit()
 	MoveRunning(-13684, -2077)
 	MoveRunning(-14113, -418)
 	out("whirling abbys")
 	waitfor(38000 - TimerDiff($whirletimer))
 	out("abbys dead")
-	PickUpLoot()
+	PickUpLootFOW()
 	out("looting abbys")
 	
 	MoveRunning(-13684, -2077)
@@ -329,17 +329,17 @@ Func loop()
 	Do
 	   if getisdead(-2) then Return
 		WaitFor(1500)
-	Until IsRecharged($mb) and isrecharged($wd)
+	Until IsRechargedFOW($mb) and IsRechargedFOW($wd)
 	moveto(-16004, -3202)
 	MoveRunning(-15272, -3004)
-	UseSkillEx($iau)
-	UseSkillEx($ds)
-	UseSkillEx($mb)
-	If IsRecharged($wd) Then
-		UseSkillEx($wd)
+	UseSkillExFOW($iau)
+	UseSkillExFOW($ds)
+	UseSkillExFOW($mb)
+	If IsRechargedFOW($wd) Then
+		UseSkillExFOW($wd)
 	EndIf
-	If IsRecharged($mb) Then
-		UseSkillEx($mb)
+	If IsRechargedFOW($mb) Then
+		UseSkillExFOW($mb)
 	 EndIf
     out("killing rangers")
 	MoveRunning(-14453, -3536)
@@ -348,7 +348,7 @@ Func loop()
 	waitfor(27000,2)
 	moveto(-14506, -2633)
 	out("looting rangers")
-	PickUpLoot()
+	PickUpLootFOW()
 	If Not getisdead(-2) Then
 		$wins = $wins + 1
 		GUICtrlSetData($winlabel, $wins)
@@ -358,7 +358,7 @@ Func loop()
 	 EndIf
 	  $spawned = False
 EndFunc   ;==>loop
-Func PickUpLoot()
+Func PickUpLootFOW()
 	Local $lMe
 	Local $lBlockedTimer
 	Local $lBlockedCount = 0
@@ -374,7 +374,7 @@ Func PickUpLoot()
 		If canpickup($lItem) Then
 			Do
 			    if $lBlockedCount > 2 Then
-					 useskillex($hos)
+					 UseSkillExFOW($hos)
 			   EndIf
 ;~ 				If GetDistance($lItem) > 150 Then Move(DllStructGetData($lItem, 'X'), DllStructGetData($lItem, 'Y'), 100)
 				PickUpItem($lItem)
@@ -392,7 +392,7 @@ Func PickUpLoot()
 			Until Not $lItemExists Or $lBlockedCount > 5
 		EndIf
 	Next
-EndFunc   ;==>PickUpLoot
+EndFunc   ;==>PickUpLootFOW
 Func canpickup($lItem)
 
    $m = DllStructGetData($lItem, 'ModelID')
@@ -611,9 +611,9 @@ While 1
 	enterfow()
 	loop()
 WEnd
-Func IsRecharged($lSkill)
+Func IsRechargedFOW($lSkill)
 	Return GetSkillbarSkillRecharge($lSkill) == 0
- EndFunc   ;==>IsRecharged
+ EndFunc   ;==>IsRechargedFOW
 
 
 Func GoNearestNPCToCoords($x, $y)

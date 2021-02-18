@@ -632,7 +632,7 @@ If @AutoItX64 Then
 		 $mMemory = DllCall($mKernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $mGWProcHandle, 'ptr', 0, 'ulong_ptr', $mASMSize, 'dword', 0x1000, 'dword', 0x40)
 		 $mMemory = $mMemory[0]
 		 MemoryWrite($mBase, $mMemory)
- ;~ 		out("First Inject: " & $mMemory)
+ ;~ 		;~ Out("First Inject: " & $mMemory)
 	 Else
 		 $mMemory = $lScanMemory
 	 EndIf
@@ -939,13 +939,13 @@ If @AutoItX64 Then
 		 EndIf
 	 Next
 	 $lCheckGold = GetGoldCharacter()
- ;~ 	out($lMatsArraySize)
+ ;~ 	;~ Out($lMatsArraySize)
  
 	 For $i = 0 To $lMatsArraySize
 		 $lMatString &= GetItemIDfromMobelID($aMatsArray[$i][0]) & ';';GetCraftMatsString($aMatsArray[$i][0], $aQuantity * $aMatsArray[$i][1])
-		 out($lMatString)
+;~		 ;~ Out($lMatString)
 		 $lMatCount += 1 ;@extended
- ;~ 		out($lMatCount)
+ ;~ 		;~ Out($lMatCount)
 	 Next
  
 	 $CraftMatsType = 'dword'
@@ -956,7 +956,7 @@ If @AutoItX64 Then
 	 $CraftMatsPointer = DllStructGetPtr($CraftMatsBuffer)
 	 For $i = 1 To $lMatCount
 		 $lSize = StringInStr($lMatString, ';')
- ;~ 		out("Mat: " & StringLeft($lMatString, $lSize - 1))
+ ;~ 		;~ Out("Mat: " & StringLeft($lMatString, $lSize - 1))
 		 DllStructSetData($CraftMatsBuffer, $i, StringLeft($lMatString, $lSize - 1))
 		 $lMatString = StringTrimLeft($lMatString, $lSize)
 	 Next
@@ -965,22 +965,22 @@ If @AutoItX64 Then
 	 If $lBufferMemory = 0 Then Return 0 ; couldnt allocate enough memory
 	 Local $lBuffer = DllCall($mKernelHandle, 'int', 'WriteProcessMemory', 'int', $mGWProcHandle, 'int', $lBufferMemory[0], 'ptr', $CraftMatsPointer, 'int', $lMemSize, 'int', '')
 	 If $lBuffer = 0 Then Return
- ;~ 	Out($lBuffer[0] & " " & $lBuffer[1] & " " & $lBuffer[2] & " " & $lBuffer[3] & " " & $lBuffer[4] & " " & $lBuffer[5])
+ ;~ 	;~ Out($lBuffer[0] & " " & $lBuffer[1] & " " & $lBuffer[2] & " " & $lBuffer[3] & " " & $lBuffer[4] & " " & $lBuffer[5])
 	 DllStructSetData($mCraftItemEx, 1, GetValue('CommandCraftItemEx'))
 	 DllStructSetData($mCraftItemEx, 2, $aQuantity)
- ;~ 	Out($aQuantity)
+ ;~ 	;~ Out($aQuantity)
  ;~     Sleep(3000)
 	 DllStructSetData($mCraftItemEx, 3, $pDstItem)
- ;~ 	Out($pDstItem)
+ ;~ 	;~ Out($pDstItem)
  ;~     Sleep(3000)
 	 DllStructSetData($mCraftItemEx, 4, $lBufferMemory[0])
-	 Out($lBufferMemory[0])
+	;~ ;~ Out($lBufferMemory[0])
  ;~     Sleep(3000)
 	 DllStructSetData($mCraftItemEx, 5, $lMatCount)
-	 Out($lMatCount)
+	 ;~ Out($lMatCount)
  ;~     Sleep(3000)
 	 DllStructSetData($mCraftItemEx, 6, $aQuantity * $aGold)
-	 Out($aQuantity * $aGold)
+	 ;~ Out($aQuantity * $aGold)
  ;~     Sleep(3000)
 	 Enqueue($mCraftItemExPtr, 24)
 	 $lDeadlock = TimerInit()
@@ -1981,7 +1981,7 @@ If @AutoItX64 Then
 				 $lBuffStructAddress = MemoryReadPtr($mBasePointer, $lOffset)
 				 DllCall($mKernelHandle, 'int', 'ReadProcessMemory', 'int', $mGWProcHandle, 'int', $lBuffStructAddress[0], 'ptr', DllStructGetPtr($lBuffStruct), 'int', DllStructGetSize($lBuffStruct), 'int', '')
 				 If (DllStructGetData($lBuffStruct, 'SkillID') == $aSkillID) And (DllStructGetData($lBuffStruct, 'TargetId') == ConvertID($aAgentID)) Then
-					 out(DllStructGetData($lBuffStruct, 'BuffId'))
+					 ;~ Out(DllStructGetData($lBuffStruct, 'BuffId'))
 					 Return SendPacket(0x8, $HEADER_STOP_MAINTAIN_ENCH, DllStructGetData($lBuffStruct, 'BuffId'))
 					 ExitLoop 2
 				 EndIf
@@ -5848,8 +5848,8 @@ If @AutoItX64 Then
 		 $lCheck = GetMapLoading() <> 2 And GetAgentExists(-2)
 	 Until $lCheck Or TimerDiff($lDeadlock) > 5000
 	 If $lCheck = False Then
-		 Out("Disconnected!")
-		 Out("Attempting to reconnect.")
+		 ;~ Out("Disconnected!")
+		 ;~ Out("Attempting to reconnect.")
 		 ControlSend(GetWindowHandle(), "", "", "{Enter}")
 		 $lDeadlock = TimerInit()
 		 Do
@@ -5857,8 +5857,8 @@ If @AutoItX64 Then
 			 $lCheck = GetMapLoading() <> 2 And GetAgentExists(-2)
 		 Until $lCheck Or TimerDiff($lDeadlock) > 60000
 		 If $lCheck = False Then
-			 Out("Failed to Reconnect 1!")
-			 Out("Retrying.")
+			 ;~ Out("Failed to Reconnect 1!")
+			 ;~ Out("Retrying.")
 			 ControlSend(GetWindowHandle(), "", "", "{Enter}")
 			 $lDeadlock = TimerInit()
 			 Do
@@ -5866,8 +5866,8 @@ If @AutoItX64 Then
 				 $lCheck = GetMapLoading() <> 2 And GetAgentExists(-2)
 			 Until $lCheck Or TimerDiff($lDeadlock) > 60000
 			 If $lCheck = False Then
-				 Out("Failed to Reconnect 2!")
-				 Out("Retrying.")
+				 ;~ Out("Failed to Reconnect 2!")
+				 ;~ Out("Retrying.")
 				 ControlSend(GetWindowHandle(), "", "", "{Enter}")
 				 $lDeadlock = TimerInit()
 				 Do
@@ -5875,15 +5875,15 @@ If @AutoItX64 Then
 					 $lCheck = GetMapLoading() <> 2 And GetAgentExists(-2)
 				 Until $lCheck Or TimerDiff($lDeadlock) > 60000
 				 If $lCheck = False Then
-					 Out("Could not reconnect!")
-					 Out("Exiting.")
+					 ;~ Out("Could not reconnect!")
+					 ;~ Out("Exiting.")
 					 EnableRendering()
 					 Exit 1
 				 EndIf
 			 EndIf
 		 EndIf
 	 EndIf
-	 Out("Reconnected!")
+	 ;~ Out("Reconnected!")
 	 Sleep(5000)
  EndFunc   ;==>Disconnected
  

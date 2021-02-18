@@ -3,9 +3,8 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-#include "config/GWA2.au3"
-#include "config/GWA2_Headers.au3"
-
+#include <config/GWA2.au3>
+#include <config/GWA2_Headers.au3>
 
 #Region ### START Koda GUI section ### Form=c:\users\mikro\downloads\koda_1.7.3.0\forms\followbot.kxf
 $FollowBot = GUICreate("Follow Bot", 262, 363, 352, 130)
@@ -167,12 +166,16 @@ Func Main()
 	If GetIsMoving($leaderAgent) then GoPlayer($leaderAgent)
 	While GetIsMoving(-2)
 		sleep(100)
+		If Not GetIsMoving($leaderAgent) and GetDistance($leaderAgent)<100 Then 
+			CastStationary()
+		Else
+			CastMoving()
+			$leaderAgent = GetAgentByPlayerNumber($leader)
+			if GetDistance($leaderAgent)>100 Then
+				GoPlayer($leaderAgent)
+			EndIf		
+		EndIf
 	WEnd
-	If Not GetIsMoving($leaderAgent) Then 
-		CastStationary()
-	Else
-		CastMoving()
-	EndIf
 EndFunc	;=>Main
 
 Func CastStationary()

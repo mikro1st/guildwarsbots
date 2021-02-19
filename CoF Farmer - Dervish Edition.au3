@@ -841,7 +841,7 @@ Func Sell($bagIndex)
 	    Else
 		   SellItem($aItem)
 		EndIf
-		RndSleep(250)
+		RndSleep(50)
 	Next
 EndFunc
 

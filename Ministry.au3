@@ -246,7 +246,7 @@ Func Merchant()
 EndFunc   ;==>Merchant
 
 Func GoToMerchant()
-	Local $lMerchant = GetAgentByName("Natsuko [Merchant]")
+	Local $lMerchant = GetNearestAgentToCoords(1448.00, -2024.00)
 	GoToNPC($lMerchant)
 EndFunc   ;==>GoToMerchant
 

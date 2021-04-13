@@ -846,6 +846,26 @@ Func CanSell($aitem)
 	EndIf
 EndFunc   ;==>CanSell
 
+Func PickUpLoot()
+	Local $lAgent
+	Local $aitem
+	Local $lDeadlock
+	For $i = 1 To GetMaxAgents()
+	If GetIsDead(-2) Then Return
+	$lAgent = GetAgentByID($i)
+	If DllStructGetData($lAgent, 'Type') <> 0x400 Then ContinueLoop
+	$aitem = GetItemByAgentID($i)
+	If CanPickUp($aitem) Then
+	PickUpItem($aitem)
+	$lDeadlock = TimerInit()
+	While GetAgentExists($i)
+	Sleep(100)
+	If GetIsDead(-2) Then Return
+	If TimerDiff($lDeadlock) > 10000 Then ExitLoop
+	WEnd
+	EndIf
+	Next
+EndFunc
 
 Func CanPickUp($aitem)
 	$m = DllStructGetData($aitem, 'ModelID')

@@ -119,6 +119,27 @@ Global $Special_Drops[] = [ _
 
 Global $Elite_Tomes[] = [21790, 21792, 21793, 21786, 21788, 21795, 21787, 21791, 21789, 21794]
 
+Func PickUpLoot()
+	Local $lAgent
+	Local $aitem
+	Local $lDeadlock
+	For $i = 1 To GetMaxAgents()
+	If GetIsDead(-2) Then Return
+	$lAgent = GetAgentByID($i)
+	If DllStructGetData($lAgent, 'Type') <> 0x400 Then ContinueLoop
+	$aitem = GetItemByAgentID($i)
+	If CanPickUp($aitem) Then
+	PickUpItem($aitem)
+	$lDeadlock = TimerInit()
+	While GetAgentExists($i)
+	Sleep(100)
+	If GetIsDead(-2) Then Return
+	If TimerDiff($lDeadlock) > 10000 Then ExitLoop
+	WEnd
+	EndIf
+	Next
+EndFunc
+
 Func CanPickUp($aitem)
 	Local $iModelID = DllStructGetData($aitem, 'ModelID')
 	Local $iType = DllStructGetData($aitem, 'Type')

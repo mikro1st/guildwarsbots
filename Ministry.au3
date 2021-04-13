@@ -495,6 +495,26 @@ Func Survive()
 	EndIf
  EndFunc   ;==>Survive
 
+ Func PickUpLoot()
+	Local $lAgent
+	Local $aitem
+	Local $lDeadlock
+	For $i = 1 To GetMaxAgents()
+	If GetIsDead(-2) Then Return
+	$lAgent = GetAgentByID($i)
+	If DllStructGetData($lAgent, 'Type') <> 0x400 Then ContinueLoop
+	$aitem = GetItemByAgentID($i)
+	If CanPickUp2($aitem) Then
+	PickUpItem($aitem)
+	$lDeadlock = TimerInit()
+	While GetAgentExists($i)
+	Sleep(100)
+	If GetIsDead(-2) Then Return
+	If TimerDiff($lDeadlock) > 10000 Then ExitLoop
+	WEnd
+	EndIf
+	Next
+EndFunc
 
 Func CanPickUp2($aitem)
 	$ModelID = DllStructGetData(($aitem), 'ModelID')
